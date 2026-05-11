@@ -7,7 +7,24 @@ function MediaCard({ item }) {
     ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
     : null;
 
+  const watchlist = useWatchlistStore((state) => state.watchlist);
   const addToWatchlist = useWatchlistStore((state) => state.addToWatchlist);
+  const removeFromWatchlist = useWatchlistStore(
+    (state) => state.removeFromWatchlist
+  );
+
+  const isInWatchlist = watchlist.some(
+    (mediaItem) =>
+      mediaItem.id === item.id && mediaItem.media_type === item.media_type
+  );
+
+  function handleWatchlistClick() {
+    if (isInWatchlist) {
+      removeFromWatchlist(item);
+    } else {
+      addToWatchlist(item);
+    }
+  }
 
   return (
     <article>
@@ -22,7 +39,9 @@ function MediaCard({ item }) {
       <p>Rating: {item.vote_average}</p>
       <p>Release: {releaseDate || "Unknown"}</p>
 
-      <button onClick={() => addToWatchlist(item)}>Add to Watchlist</button>
+      <button onClick={handleWatchlistClick}>
+        {isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+      </button>
     </article>
   );
 }
